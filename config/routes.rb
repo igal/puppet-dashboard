@@ -8,7 +8,10 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.resources :nodes, 
-    :member => {:reports => :get},
+    :member => {
+      :reports => :get,
+      :run => :post
+    },
     :collection => {
      :successful => :get,
      :failed     => :get,

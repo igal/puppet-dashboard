@@ -7,6 +7,10 @@
     %ul.actions
       %li= link_to 'Edit', edit_node_path(@node), :class => "edit button", :rel => 'inspect'
       %li= link_to 'Destroy', @node, :confirm => 'Are you sure?', :method => :delete, :class => "delete button"
+      %li
+        - form_tag run_node_path(@node) do
+          %button.warning Trigger Puppet Run!
+
   .item
     - unless resource.description.blank?
       .description= simple_format h(resource.description)

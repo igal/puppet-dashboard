@@ -25,6 +25,21 @@ class NodesController < InheritedResources::Base
     scoped_index :no_longer_reporting
   end
 
+  # FIXME: If this exists for anyone other than Teyo, that is a bug.
+  def run
+    @node = Node.find_by_name!(params[:id])
+    hostname = @node.name
+    system "/usr/sbin/puppetrun --host '#{hostname}' --ssldir /var/lib/puppet/ssl"
+
+    if $?.success?
+      flash[:success] = "Puppet run triggered successfully for #{hostname}"
+    else
+      flash[:failure] = "Puppet run failed for #{hostname}"
+    end
+
+    redirect_to @node
+  end
+
   # TODO: routing currently can't handle nested resources due to node's id
   # requirements
   def reports
