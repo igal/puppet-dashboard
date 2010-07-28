@@ -10,6 +10,15 @@
     %li= link_to 'Destroy', @report, :confirm => 'Are you sure?', :method => :delete, :class => "delete button"
 
 .item
+  - if report.report && report.report.respond_to?(:resource_statuses)
+    .section
+      %h3 Resource statuses
+      .section
+        - report.report.resource_statuses.sort_by{|name, metric| name}.each do |name, status|
+          - next if name =~ /^Schedule\b/
+          %h4= name.titleize
+          %table.inspector
+            = render :partial => 'puppet/resource/status/status', :object => status
   .section
     %h3 Log
     .section
@@ -29,11 +38,12 @@
   .section
     %h3 Metrics
     - if report.metrics.present?
+      -# - require 'rubygems'; require 'ruby-debug'; Debugger.start; debugger; 1 # FIXME
       - report.metrics.sort_by{|name, metric| name}.each do |name, metric|
         - if metric.values.present?
           .section
             %h4= name.titleize
             %table.inspector
-              = render metric
+              = render :partial => 'puppet/util/metrics/metric', :object => metric
     - else
       &mdash; No metrics in this report &mdash;

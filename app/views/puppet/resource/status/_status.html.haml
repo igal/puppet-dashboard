@@ -1,0 +1,26 @@
+-### Puppet::Resource::Status
+
+-### Structure:
+-# ATTRIBUTES = [:resource, :node, :version, :file, :line, :current_values, :skipped_reason, :status, :evaluation_time, :change_count]
+-# STATES = [:skipped, :failed, :failed_to_restart, :restarted, :changed, :out_of_sync, :scheduled]
+-# attr_reader :source_description, :default_log_level, :time, :resource
+
+-### Example:
+-# "File[/tmp/foo]": !ruby/object:Puppet::Resource::Status
+-#   evaluation_time: 0.000868
+-#   events: []
+-#   file: /etc/puppet/manifests/site.pp
+-#   line: 2
+-#   resource: "File[/tmp/foo]"
+-#   source_description: "/Stage[main]//Node[default]/File[/tmp/foo]"
+-#   tags:
+-#     - file
+-#     - node
+-#     - default
+-#     - class
+-#   time: 2010-07-22 14:42:39.654436 -04:00
+-#   version: 1279824159
+
+%tr
+  %td
+    %table
