@@ -197,7 +197,7 @@ describe Node do
     end
 
     it "should return the node's compiled parameters in the returned parameters list" do
-      @node.stubs(:compiled_parameters).returns({'a' => 'b', 'c' => 'd'})
+      @node.stubs(:compiled_parameters).returns({'a' => ['b', Set[:foo]], 'c' => ['d', Set[:bar]]})
       @node.configuration['parameters'].should == { 'a' => 'b', 'c' => 'd' }  
     end
   end
@@ -256,7 +256,7 @@ describe Node do
 
   describe "handling the node group graph" do
     before do
-      @node = Node.generate!
+      @node = Node.generate! :name => "Sample"
 
       @node_group_a = NodeGroup.generate! :name => "A"
       @node_group_b = NodeGroup.generate! :name => "B"
@@ -273,17 +273,19 @@ describe Node do
 
     describe "when a group is included twice" do
       before do
-        @node_group_c = NodeGroup.generate!
+        @node_group_c = NodeGroup.generate! :name => "C"
+        @node_group_d = NodeGroup.generate! :name => "D"
+        @node_group_c.node_groups << @node_group_d
         @node_group_a.node_groups << @node_group_c
         @node_group_b.node_groups << @node_group_c
       end
 
       it "should return the correct graph" do
-        @node.node_group_graph.should == {@node_group_a => {@node_group_c => {}}, @node_group_b => {@node_group_c => {}}}
+        @node.node_group_graph.should == {@node_group_a => {@node_group_c => {@node_group_d => {}}}, @node_group_b => {@node_group_c => {@node_group_d => {}}}}
       end
 
       it "should return the correct list" do
-        @node.node_group_list.should == [@node, @node_group_a, @node_group_c, @node_group_b]
+        @node.node_group_list.should == {@node_group_a => Set[@node], @node_group_c => Set[@node_group_a,@node_group_b], @node_group_b => Set[@node], @node_group_d => Set[@node_group_c]}
       end
     end
 
@@ -293,17 +295,15 @@ describe Node do
 
       @node.node_group_graph.should == {
         @node_group_a => {
-          @node_group_b => {
-            @node_group_a => {} }},
+          @node_group_b => {} },
         @node_group_b => {
-          @node_group_a => {
-            @node_group_b => {} }}}
+          @node_group_a => {} }}
     end
 
     describe "handling parameters in the graph" do
 
       it "should return the compiled parameters" do
-        @node.compiled_parameters.should == {'foo' => '1', 'bar' => '2'}
+        @node.compiled_parameters.should == {'foo' => ['1', Set[@node_group_a]], 'bar' => ['2', Set[@node_group_b]]}
       end
 
       it "should ensure that parameters nearer to the node are retained" do
@@ -311,7 +311,7 @@ describe Node do
         @node_group_a1.parameters << Parameter.create(:key => 'foo', :value => '2')
         @node_group_a.node_groups << @node_group_a1
 
-        @node.compiled_parameters.should == {'foo' => '1', 'bar' => '2'}
+        @node.compiled_parameters.should == {'foo' => ['1', Set[@node_group_a]], 'bar' => ['2', Set[@node_group_b]]}
       end
 
       it "should raise an error if there are parameter conflicts among children" do
@@ -344,7 +344,18 @@ describe Node do
       it "should include parameters of the node itself" do
         @node.parameters << Parameter.create(:key => "node_parameter", :value => "exist")
 
-        @node.compiled_parameters["node_parameter"].should == "exist"
+        @node.compiled_parameters["node_parameter"].first.should == "exist"
+      end
+
+      it "should retain the history of its parameters" do
+        @node_group_c = NodeGroup.generate! :name => "C"
+        @node_group_d = NodeGroup.generate! :name => "D"
+        @node_group_c.parameters << Parameter.generate(:key => 'foo', :value => '3')
+        @node_group_d.parameters << Parameter.generate(:key => 'foo', :value => '4')
+        @node_group_a.node_groups << @node_group_c
+        @node_group_a.node_groups << @node_group_d
+
+        @node.compiled_parameters.should == {'foo' => ['1', Set[@node_group_a]], 'bar' => ['2',Set[@node_group_b]]}
       end
     end
   end
