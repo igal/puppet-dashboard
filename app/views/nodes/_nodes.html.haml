@@ -13,7 +13,8 @@
         &darr; Latest report
   %tbody
     - if nodes.present?
-      - for node in nodes
+      - nodes.each do |node|
+        - sources = resource.node_list[node] rescue nil
         %tr[node]{:class => "#{'active' if node == @node}"}
           -# %td.check
             -# = check_box_tag dom_id(node)
@@ -22,6 +23,7 @@
               = node_status_icon(node)
           %td.hostname
             = link_to h(node.name), node
+            = " via #{sources.map{|s| link_to(s.name,s)}.to_sentence}" unless sources.nil? or sources.include?(resource)
           %td.latest_report
             = node.last_report ? node.last_report.time.to_s : "Has not reported"
       = pagination_for nodes, more_link

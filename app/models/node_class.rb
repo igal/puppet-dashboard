@@ -1,4 +1,6 @@
 class NodeClass < ActiveRecord::Base
+  include NodeGroupGraph
+
   has_many :node_group_class_memberships, :dependent => :destroy
   has_many :node_class_memberships, :dependent => :destroy
 
@@ -18,5 +20,18 @@ class NodeClass < ActiveRecord::Base
 
   def to_json(options)
     super({:methods => :description, :only => [:name, :id]}.merge(options))
+  end
+
+  def node_list
+    return @node_list if @node_list
+    all = {}
+    self.walk(:node_groups,:loops => false) do |group,_|
+      group.nodes.each do |node|
+        all[node] ||= Set.new
+        all[node] << group
+      end
+      group
+    end
+    @node_list = all
   end
 end

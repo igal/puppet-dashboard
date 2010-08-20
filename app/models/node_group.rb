@@ -62,4 +62,17 @@ class NodeGroup < ActiveRecord::Base
     end
     @node_group_child_list = all
   end
+
+  def node_list
+    return @node_list if @node_list
+    all = {}
+    self.walk(:node_group_children,:loops => false) do |group,_|
+      group.nodes.each do |node|
+        all[node] ||= Set.new
+        all[node] << group
+      end
+      group
+    end
+    @node_list = all
+  end
 end

@@ -27,12 +27,10 @@
       - else
         &mdash; No child groups &mdash;
 
-
-
   .item
     - if @node_group.nodes.present?
       .section
         = render 'statuses/run_failure', :nodes => @node_group.nodes
     .section
       %h3 Nodes for this group
-      = render 'nodes/nodes', :nodes => @node_group.nodes
+      = render 'nodes/nodes', :nodes => @node_group.node_list.map(&:first)
