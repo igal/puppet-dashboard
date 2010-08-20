@@ -7,26 +7,27 @@
       %li= link_to 'Destroy', @node_group, :confirm => 'Are you sure?', :method => :delete, :class => "delete button"
 
   .item
-    .section
-      %h3 Parameters
-      - unless @node_group.parameters.blank?
-        = inspector_table @node_group.parameters.to_hash
-      - else
-        &mdash; No parameters &mdash;
+    = render 'shared/parameters', :resource => @node_group
+    = render 'shared/groups', :resource => @node_group
+    = render 'shared/classes', :resource => @node_group
 
     .section.half
-      %h3 Inherited groups
-      - unless @node_group.node_groups.blank?
-        = inspector_table @node_group.node_groups, :name, false, :link => true
+      %h3 Derived groups
+      - unless resource.node_group_child_list.empty?
+        %table.inspector
+          %thead
+            %tr
+              %th.key Name
+          %tbody
+            - resource.node_group_child_list.each do |group,parents|
+              %tr
+                %td.key
+                  %strong= link_to(group.name,group)
+                  = " via #{parents.map{|p| link_to(p.name,p)}.to_sentence}" unless parents.include?(resource)
       - else
-        &mdash; No groups &mdash;
+        &mdash; No child groups &mdash;
 
-    .section.half
-      %h3 Classes
-      - unless @node_group.node_classes.blank?
-        = inspector_table @node_group.node_classes, :name, false, :link => true
-      - else
-        &mdash; No classes &mdash;
+
 
   .item
     - if @node_group.nodes.present?

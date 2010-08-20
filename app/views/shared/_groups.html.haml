@@ -1,0 +1,15 @@
+.section.half
+  %h3 Groups
+  - unless resource.node_group_list.empty?
+    %table.inspector
+      %thead
+        %tr
+          %th.key Name
+      %tbody
+        - resource.node_group_list.each do |group,parents|
+          %tr
+            %td.key
+              %strong= link_to(group.name,group)
+              = " via #{parents.map{|p| link_to(p.name,p)}.to_sentence}" unless parents.include?(resource)
+  - else
+    &mdash; No groups &mdash;

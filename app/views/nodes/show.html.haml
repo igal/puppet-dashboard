@@ -11,33 +11,9 @@
     - unless resource.description.blank?
       .description= simple_format h(resource.description)
 
-    -# Conflicting parameters are okay here, since we just want to warn
-    - if resource.compiled_parameters(true).present?
-      - if resource.errors.on(:parameters)
-        %p.error
-          %strong Warning:
-          The following parameters have multiple conflicting values:
-          = [*resource.errors.on(:parameters)].join(", ")
-      = inspector_table resource.compiled_parameters(true), :key, :value, :link => false, :caption => 'Parameters'
-        
-
-    .section.half
-      %h3 Groups
-      - unless resource.node_groups.empty?
-        = inspector_table resource.node_groups, :name, false, :link => true
-      - else
-        &mdash; No groups &mdash;
-
-    .section.half
-      %h3 Classes
-      - unless resource.node_classes.empty?
-        = inspector_table resource.node_classes, :name, false, :link => true
-      - else
-        &mdash; No classes &mdash;
-
-    - unless resource.inherited_classes.empty?
-      = inspector_table resource.inherited_classes, :name, false, :link => true, :caption => 'Inherited Classes'
-
+    = render 'shared/parameters', :resource => @node
+    = render 'shared/groups', :resource => @node
+    = render 'shared/classes', :resource => @node
 
     %br.clear
 
