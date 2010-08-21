@@ -4,12 +4,14 @@
     %table.inspector
       %thead
         %tr
-          %th.key Name
+          %th.name Class
+          %th Source groups
       %tbody
         - resource.node_class_list.each do |node_class,parents|
           %tr
-            %td.key
+            %td.name
               %strong= link_to(node_class.name,node_class)
-              = " via #{parents.map{|p| link_to(p.name,p)}.to_sentence}" unless parents.include?(resource)
+            %td
+              = parents.map{|p| link_to(p.name,p)}.join(", ") unless parents.include?(resource)
   - else
     &mdash; No classes &mdash;

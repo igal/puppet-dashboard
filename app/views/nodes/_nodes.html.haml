@@ -9,6 +9,8 @@
       %th.status
       %th.hostname
         Hostname
+      - if defined? resource
+        %th Source groups
       %th.latest_report.desc
         &darr; Latest report
   %tbody
@@ -23,7 +25,9 @@
               = node_status_icon(node)
           %td.hostname
             = link_to h(node.name), node
-            = " via #{sources.map{|s| link_to(s.name,s)}.to_sentence}" unless sources.nil? or sources.include?(resource)
+          - if defined? resource
+            %td
+              = sources.map{|s| link_to(s.name,s)}.join(", ") unless sources.include?(resource)
           %td.latest_report
             = node.last_report ? node.last_report.time.to_s : "Has not reported"
       = pagination_for nodes, more_link

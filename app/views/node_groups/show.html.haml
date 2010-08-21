@@ -17,13 +17,15 @@
         %table.inspector
           %thead
             %tr
-              %th.key Name
+              %th Group
+              %th Source groups
           %tbody
             - resource.node_group_child_list.each do |group,parents|
               %tr
-                %td.key
+                %td
                   %strong= link_to(group.name,group)
-                  = " via #{parents.map{|p| link_to(p.name,p)}.to_sentence}" unless parents.include?(resource)
+                %td
+                  = parents.map{|p| link_to(p.name,p)}.join(", ") unless parents.include?(resource)
       - else
         &mdash; No child groups &mdash;
 

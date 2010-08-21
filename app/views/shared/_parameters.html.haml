@@ -10,16 +10,18 @@
     %table.inspector
       %thead
         %tr
-          %th.key Key
-          %th.value{:colspan => 2} Value
+          %th Key
+          %th Value
+          %th Source groups
       %tbody
         - resource.compiled_parameters(true).each do |key,value_sources_pair|
           - value,sources = value_sources_pair
           %tr
-            %td.key{:style => ("background-color: pink;" if sources.size > 1)}
+            %td{:style => ("background-color: pink;" if sources.size > 1)}
               %tt= key
-            %td.value
+            %td
               %tt= value
-              = " from #{sources.map{|source| link_to(source.name,node_group_path(source.id))}.to_sentence}" unless sources == Set[resource]
+            %td
+              = sources.map{|source| link_to(source.name,node_group_path(source.id))}.join(", ") unless sources == Set[resource]
   - else
     &mdash; no parameters &mdash;
