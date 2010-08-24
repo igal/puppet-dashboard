@@ -29,5 +29,5 @@
             = node.last_report ? node.last_report.time.to_s : "Has not reported"
       = pagination_for nodes, more_link
     - else
-      %td.empty{:colspan => 3}
+      %td.empty{:colspan => container.nil? ? 3 : 4}
         &mdash; No nodes found &mdash;
