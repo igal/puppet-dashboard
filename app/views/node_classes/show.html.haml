@@ -19,4 +19,4 @@
         = render 'statuses/run_failure', :nodes => @node_class.nodes
     .section
       %h3 Nodes in this class
-      = render 'nodes/nodes', :nodes => @node_class.node_list.map(&:first)
+      = render 'nodes/nodes', :nodes => @node_class.node_list.map(&:first), :container => @node_class

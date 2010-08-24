@@ -35,4 +35,4 @@
         = render 'statuses/run_failure', :nodes => @node_group.nodes
     .section
       %h3 Nodes for this group
-      = render 'nodes/nodes', :nodes => @node_group.node_list.map(&:first)
+      = render 'nodes/nodes', :nodes => @node_group.node_list.map(&:first), :container => @node_group
