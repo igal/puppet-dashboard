@@ -285,7 +285,7 @@ describe Node do
       end
 
       it "should return the correct list" do
-        @node.node_group_list.should == {@node_group_a => Set[@node], @node_group_c => Set[@node_group_a,@node_group_b], @node_group_b => Set[@node], @node_group_d => Set[@node_group_c]}
+        @node.node_group_list.should == [[@node_group_a, Set[@node]], [@node_group_b, Set[@node]], [@node_group_c, Set[@node_group_a,@node_group_b]], [@node_group_d, Set[@node_group_c]]]
       end
     end
 

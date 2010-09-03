@@ -11,7 +11,7 @@ module NodeGroupGraph
       end
       group
     end
-    @node_group_list = all
+    @node_group_list = all.sort {|a,b| a.first.name <=> b.first.name}
   end
 
   def node_group_graph
@@ -30,7 +30,7 @@ module NodeGroupGraph
       end
       group
     end
-    @node_class_list = all
+    @node_class_list = all.sort {|a,b| a.first.name <=> b.first.name}
   end
 
   # Collects all the parameters of the node, starting at the "most distant" groups
